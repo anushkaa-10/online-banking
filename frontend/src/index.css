@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.custom-bg {
+  background-image: url('https://media.istockphoto.com/id/1266975549/vector/mobile-bank-conceptual-illustration-internet-online-banking-on-phone-access-to-the-money-on.jpg?s=612x612&w=0&k=20&c=U4i9L--l0sVcqI59HnyFRK6Q11KZQwHPUEk_5iNhTWI=');
+  background-size: cover;
+  background-position: center;
+}
+
+.relative.group:hover .absolute, .relative.group:focus-within .absolute {
+  display: block;
+  z-index: 50;
+}
+
+.table-fixed {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-fixed th, .table-fixed td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.table-fixed th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #f2f2f2;
+}
