@@ -1,16 +1,38 @@
 import React from 'react';
+import axios from 'axios';
 
 const OnlineBanking = () => {
-  const handleInsurance = () => {
-    console.log("Redirecting to insurance service...");
+  const handleInsurance = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/services/insurance', {
+        serviceDetails: "Insurance Service Request Details",
+      });
+      console.log("Insurance service response:", response.data);
+    } catch (error) {
+      console.error('Error requesting insurance service:', error);
+    }
   };
 
-  const handleBillPayments = () => {
-    console.log("Redirecting to bill payments service...");
+  const handleBillPayments = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/services/bill-payments', {
+        serviceDetails: "Bill Payments Service Request Details",
+      });
+      console.log("Bill payments service response:", response.data);
+    } catch (error) {
+      console.error('Error requesting bill payments service:', error);
+    }
   };
 
-  const handleOtherServices = () => {
-    console.log("Redirecting to other services...");
+  const handleOtherServices = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/services/other-services', {
+        serviceDetails: "Other Services Request Details",
+      });
+      console.log("Other services response:", response.data);
+    } catch (error) {
+      console.error('Error requesting other services:', error);
+    }
   };
 
   return (
