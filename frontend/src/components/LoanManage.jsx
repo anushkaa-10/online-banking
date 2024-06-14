@@ -1,17 +1,27 @@
 import React, { useState } from 'react';
-
+import axios from 'axios';
 
 const LoanManagement = () => {
   const [loanAmount, setLoanAmount] = useState('');
   const [loanType, setLoanType] = useState('');
   const [loanDuration, setLoanDuration] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Loan details submitted:", { loanAmount, loanType, loanDuration });
-    setLoanAmount('');
-    setLoanType('');
-    setLoanDuration('');
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/loans', {
+        loanAmount,
+        loanType,
+        loanDuration,
+      });
+      console.log('Loan details submitted:', response.data);
+      setLoanAmount('');
+      setLoanType('');
+      setLoanDuration('');
+    } catch (error) {
+      console.error('Error submitting loan details:', error);
+    }
   };
 
   return (
