@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const TransactionManagement = () => {
   const [amount, setAmount] = useState('');
   const [recipient, setRecipient] = useState('');
   const [cashierMode, setCashierMode] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Transaction initiated:", { amount, recipient });
-    setAmount('');
-    setRecipient('');
+    try {
+      const response = await axios.post('http://localhost:3000/api/transactions', {
+        amount,
+        recipient,
+        cashierMode
+      });
+      console.log("Transaction initiated:", response.data);
+      setAmount('');
+      setRecipient('');
+      setCashierMode(false);
+    } catch (error) {
+      console.error('Error initiating transaction:', error);
+    }
   };
 
   return (
