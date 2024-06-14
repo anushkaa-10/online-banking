@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const AccountManagement = () => {
   const [firstName, setFirstName] = useState('');
@@ -6,13 +7,24 @@ const AccountManagement = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Account details submitted:", { firstName, lastName, email, password });
-    setFirstName('');
-    setLastName('');
-    setEmail('');
-    setPassword('');
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/accounts', {
+        firstName,
+        lastName,
+        email,
+        password,
+      });
+      console.log('Account details submitted:', response.data);
+      setFirstName('');
+      setLastName('');
+      setEmail('');
+      setPassword('');
+    } catch (error) {
+      console.error('Error submitting account details:', error);
+    }
   };
 
   return (
