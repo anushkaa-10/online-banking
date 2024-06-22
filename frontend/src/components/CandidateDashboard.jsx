@@ -1,81 +1,108 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Navbar from './Navbar';
 
-const CandidateDashboard = ({ candidate }) => {
-  const [showBalance, setShowBalance] = useState(false);
-  const [password, setPassword] = useState('');
-  const [inputPassword, setInputPassword] = useState('');
+const Dashboard = () => {
+  const [user, setUser] = useState({});
+  const [amount, setAmount] = useState('');
+  const [error, setError] = useState('');
 
-  const handleShowBalance = () => {
-    if (inputPassword === password) {
-      setShowBalance(true);
-    } else {
-      alert('Incorrect password');
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:3000/api/dashboard/dashboard', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleAddMoney = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post('http://localhost:3000/api/dashboard/add-money', { amount: parseInt(amount) }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setUser(response.data);
+      setAmount('');
+    } catch (error) {
+      console.error('Error adding money:', error);
+      setError('Failed to add money');
+    }
+  };
+
+  const handleWithdrawMoney = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post('http://localhost:3000/api/dashboard/withdraw-money', { amount: parseInt(amount) }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setUser(response.data);
+      setAmount('');
+    } catch (error) {
+      console.error('Error withdrawing money:', error);
+      setError('Failed to withdraw money');
     }
   };
 
   return (
     <div>
       <Navbar/>
-    
-    <div className="relative z-10 p-4 bg-white bg-opacity-90 rounded shadow-lg max-w-4xl mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-4">Candidate Dashboard</h2>
-      <div className="mb-4">
-        <label className="block text-gray-700">Account Holder Name</label>
-        <p className="p-2 border border-gray-300 rounded mt-2">{candidate.accountHolderName}</p>
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Bank Account Number</label>
-        <p className="p-2 border border-gray-300 rounded mt-2">{candidate.bankAccountNumber}</p>
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Account Balance</label>
-        {showBalance ? (
-          <p className="p-2 border border-gray-300 rounded mt-2">{candidate.accountBalance}</p>
-        ) : (
-          <div>
-            <input
-              type="password"
-              value={inputPassword}
-              onChange={(e) => setInputPassword(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded mt-2"
-              placeholder="Enter password to view balance"
-            />
-            <button
-              onClick={handleShowBalance}
-              className="bg-blue-500 text-white py-2 px-4 rounded mt-2 hover:bg-blue-700"
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="w-full sm:w-11/12 md:w-4/5 lg:w-3/5 xl:w-2/5 bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-2xl font-bold text-center mb-4">Welcome, {user.firstName} {user.lastName}</h2>
+        <div className="mb-4">
+          <label className="block text-gray-700">Account Number:</label>
+          <p className="border p-2 rounded bg-gray-50">{user.username}</p>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">Balance:</label>
+          <p className="border p-2 rounded bg-gray-50">₹{user.balance}</p>
+        </div>
+        <div className="flex flex-col space-y-4">
+          <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Apply for FD</button>
+          <button className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Apply for Credit Card</button>
+          <button className="w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600">Apply for Loan</button>
+        </div>
+        <div className="mt-4">
+          <input 
+            type="number" 
+            placeholder="Amount" 
+            value={amount} 
+            onChange={(e) => setAmount(e.target.value)} 
+            className="w-full p-2 border rounded mb-2"
+          />
+          <div className="flex space-x-4">
+            <button 
+              onClick={handleAddMoney} 
+              className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
             >
-              Show Balance
+              Add Money
+            </button>
+            <button 
+              onClick={handleWithdrawMoney} 
+              className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
+            >
+              Withdraw Money
             </button>
           </div>
-        )}
-      </div>
-      <div className="mb-4">
-        <h3 className="text-xl font-bold mb-2">Recent Transactions</h3>
-        <table className="min-w-full bg-white">
-          <thead>
-            <tr>
-              <th className="py-2">Date</th>
-              <th className="py-2">Type</th>
-              <th className="py-2">Amount</th>
-              <th className="py-2">Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {candidate.transactionHistory.map((transaction, index) => (
-              <tr key={index} className="text-gray-700">
-                <td className="border px-4 py-2">{transaction.date}</td>
-                <td className="border px-4 py-2">{transaction.type}</td>
-                <td className="border px-4 py-2">{transaction.amount}</td>
-                <td className="border px-4 py-2">{transaction.description}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          {error && <p className="text-red-500 mt-2">{error}</p>}
+        </div>
       </div>
     </div>
     </div>
   );
 };
 
-export default CandidateDashboard;
+export default Dashboard;
