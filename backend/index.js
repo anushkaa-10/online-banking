@@ -8,6 +8,7 @@ import loanRoutes from './routes/loan.routes.js';
 import serviceRoutes from './routes/service.routes.js';
 import transactionRoutes from './routes/transaction.routes.js'; 
 import authRoutes from './routes/auth.routes.js';
+import dashboardRoutes from './routes/dashboard.routes.js'
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
-  origin: 'http://localhost:5173', 
+  origin: 'http://localhost:5174', 
   credentials: true
 }));
 app.use(cookieParser());
@@ -29,7 +30,8 @@ app.use('/api/accounts', accountRoutes);
 app.use('/api/loans', loanRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/transactions', transactionRoutes); 
-app.use('/auth', authRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Connecting to MongoDB
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
