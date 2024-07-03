@@ -52,6 +52,10 @@ router.post('/add-money', verifyToken, async (req, res) => {
 
     // Add amount to balance
     user.balance += amount;
+
+    // Log transaction
+    user.transactions.push({ amount, type: 'credit' });
+
     await user.save();
 
     res.status(200).json(user);
@@ -80,12 +84,33 @@ router.post('/withdraw-money', verifyToken, async (req, res) => {
 
     // Subtract amount from balance
     user.balance -= amount;
+
+    // Log transaction
+    user.transactions.push({ amount, type: 'debit' });
+
     await user.save();
 
     res.status(200).json(user);
   } catch (error) {
     console.error('Error withdrawing money:', error);
     res.status(500).json({ error: 'Error withdrawing money from user account' });
+  }
+});
+
+// Get transactions route
+router.get('/transactions', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const user = await User.findById(userId).select('transactions');
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json(user.transactions);
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    res.status(500).json({ error: 'Error fetching transactions' });
   }
 });
 
