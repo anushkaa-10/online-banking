@@ -5,12 +5,16 @@ const LoanSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  loanType: {
-    type: String,
+  loanDuration: {
+    type: Number, 
     required: true,
   },
-  loanDuration: {
-    type: String,
+  monthlyInstallment: {
+    type: Number,
+    required: true,
+  },
+  totalInterest: {
+    type: Number,
     required: true,
   },
   createdAt: {

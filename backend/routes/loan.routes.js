@@ -1,25 +1,33 @@
-// routes/loan.routes.js
-
 import express from 'express';
 import Loan from '../models/Loan.js';
 
 const router = express.Router();
 
+router.post('/api/loans', async (req, res) => {
+  const { loanAmount, loanDuration } = req.body;
 
-router.get('/', async (req, res) => {
   try {
-    const { loanAmount, loanType, loanDuration } = req.body;
+    const principal = parseFloat(loanAmount);
+    const time = parseFloat(loanDuration);
+    const rate = 10 / 100;
+    const n = time * 12;
+    const monthlyRate = rate / 12;
 
-    const newLoan = new Loan({
+    const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1);
+    const totalPayment = emi * n;
+    const totalInterest = totalPayment - principal;
+
+    const loan = new Loan({
       loanAmount,
-      loanType,
       loanDuration,
+      monthlyInstallment: parseFloat(emi.toFixed(2)),
+      totalInterest: parseFloat(totalInterest.toFixed(2)),
     });
 
-    const savedLoan = await newLoan.save();
-    res.status(201).json(savedLoan);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    await loan.save();
+    res.status(201).json(loan);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating loan', error });
   }
 });
 

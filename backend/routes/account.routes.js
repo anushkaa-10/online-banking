@@ -4,7 +4,6 @@ import Account from '../models/Account.js';
 
 const router = express.Router();
 
-// POST a new account
 router.get('/', async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
